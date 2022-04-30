@@ -39,7 +39,7 @@ public class UserController {
         var outputData = userApplicationService.get(inputData);
 
         var maybeUser = outputData.maybeUser().map((it) ->
-                new UserResponseModel(it.id(), it.name())
+                new UserResponseModel(it.id(), it.name(), it.userType())
         );
 
         return new UserGetResponseModel(maybeUser.orElse(null));
@@ -48,12 +48,13 @@ public class UserController {
     @PostMapping
     public UserPostResponseModel post(@RequestBody UserPostRequestModel body) {
         var inputData = new UserRegisterInputData(body.name());
-        var id = userApplicationService.register(inputData);
+        var user = userApplicationService.register(inputData);
 
         return new UserPostResponseModel(
                 new UserResponseModel(
-                        id.value(),
-                        inputData.name()
+                        user.id(),
+                        user.name(),
+                        user.userType()
                 )
         );
     }
@@ -68,5 +69,11 @@ public class UserController {
     public void delete(@PathVariable("id") String id) {
         var userId = new UserId(id);
         userApplicationService.delete(userId);
+    }
+
+    @PostMapping("/{id}/upgrade")
+    public void upgrade(@PathVariable("id") String id) {
+        var userId = new UserId(id);
+        userApplicationService.upgrade(userId);
     }
 }

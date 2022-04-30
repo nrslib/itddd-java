@@ -7,10 +7,7 @@ import com.example.itddd.sns.application.service.user.get.UserGetOutputData;
 import com.example.itddd.sns.application.service.user.getlist.UserGetListOutputData;
 import com.example.itddd.sns.application.service.user.register.UserRegisterInputData;
 import com.example.itddd.sns.application.service.user.update.UserUpdateInputData;
-import com.example.itddd.sns.domain.models.user.UserFactory;
-import com.example.itddd.sns.domain.models.user.UserId;
-import com.example.itddd.sns.domain.models.user.UserName;
-import com.example.itddd.sns.domain.models.user.UserRepository;
+import com.example.itddd.sns.domain.models.user.*;
 import org.springframework.transaction.annotation.Transactional;
 
 public class UserApplicationService {
@@ -33,18 +30,18 @@ public class UserApplicationService {
         var userId = new UserId(inputData.id());
         var maybeUser = userRepository.find(userId);
 
-        var maybeUserData = maybeUser.map((it) -> new UserData(it.getId().value(), it.getName().value()));
+        var maybeUserData = maybeUser.map((it) -> new UserData(it.getId().value(), it.getName().value(), it.getType()));
 
         return new UserGetOutputData(maybeUserData);
     }
 
     @Transactional
-    public UserId register(UserRegisterInputData inputData) {
+    public UserData register(UserRegisterInputData inputData) {
         var userName = new UserName(inputData.name());
         var user = userFactory.create(userName);
         userRepository.save(user);
 
-        return user.getId();
+        return new UserData(user.getId().value(), user.getName().value(), user.getType());
     }
 
     @Transactional
@@ -64,5 +61,17 @@ public class UserApplicationService {
     @Transactional
     public void delete(UserId id) {
         userRepository.delete(id);
+    }
+
+    @Transactional
+    public void upgrade(UserId id) {
+        var user = userRepository.find(id)
+                .orElseThrow(() -> new NotFoundException("user id: " + id.value()));
+
+        // check upgrade condition here.
+
+        user.upgrade();
+
+        userRepository.save(user);
     }
 }

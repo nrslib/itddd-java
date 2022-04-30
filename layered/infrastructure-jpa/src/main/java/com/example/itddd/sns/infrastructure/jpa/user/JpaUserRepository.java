@@ -1,10 +1,6 @@
 package com.example.itddd.sns.infrastructure.jpa.user;
 
-import com.example.itddd.sns.domain.models.user.User;
-import com.example.itddd.sns.domain.models.user.UserId;
-import com.example.itddd.sns.domain.models.user.UserName;
-import com.example.itddd.sns.domain.models.user.UserRepository;
-import org.springframework.dao.EmptyResultDataAccessException;
+import com.example.itddd.sns.domain.models.user.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +45,8 @@ public class JpaUserRepository implements UserRepository {
     private User newUser(UserDataModel userDataModel) {
         return new User(
                 new UserId(userDataModel.getId()),
-                new UserName(userDataModel.getName())
+                new UserName(userDataModel.getName()),
+                convertUserType(userDataModel.getType())
         );
     }
 
@@ -57,7 +54,22 @@ public class JpaUserRepository implements UserRepository {
         return new UserDataModel(
                 user.getId().value(),
                 user.getName().value(),
-                1
+                convert(user.getType())
         );
+    }
+
+    private int convert(UserType type) {
+        return switch (type) {
+            case Normal -> 1;
+            case Premium -> 2;
+        };
+    }
+
+    private UserType convertUserType(int typeInt) {
+        return switch (typeInt) {
+            case 1 -> UserType.Normal;
+            case 2 -> UserType.Premium;
+            default -> throw new IllegalStateException("Unexpected value: " + typeInt);
+        };
     }
 }

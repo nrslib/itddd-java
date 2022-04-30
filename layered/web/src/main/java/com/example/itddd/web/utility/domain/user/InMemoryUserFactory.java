@@ -1,9 +1,6 @@
 package com.example.itddd.web.utility.domain.user;
 
-import com.example.itddd.sns.domain.models.user.User;
-import com.example.itddd.sns.domain.models.user.UserFactory;
-import com.example.itddd.sns.domain.models.user.UserId;
-import com.example.itddd.sns.domain.models.user.UserName;
+import com.example.itddd.sns.domain.models.user.*;
 
 import java.util.UUID;
 
@@ -13,6 +10,6 @@ public class InMemoryUserFactory implements UserFactory {
         var rawId = UUID.randomUUID().toString();
         var id = new UserId(rawId);
 
-        return new User(id, name);
+        return new User(id, name, UserType.Normal);
     }
 }

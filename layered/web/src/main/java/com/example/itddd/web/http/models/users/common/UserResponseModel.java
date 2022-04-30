@@ -1,4 +1,6 @@
 package com.example.itddd.web.http.models.users.common;
 
-public record UserResponseModel(String id, String name) {
+import com.example.itddd.sns.domain.models.user.UserType;
+
+public record UserResponseModel(String id, String name, UserType userType) {
 }
