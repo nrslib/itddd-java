@@ -7,7 +7,7 @@ import com.example.itddd.sns.application.service.user.update.UserUpdateInputData
 import com.example.itddd.sns.domain.models.user.UserId;
 import com.example.itddd.web.http.models.users.common.UserResponseModel;
 import com.example.itddd.web.http.models.users.get.UserGetResponseModel;
-import com.example.itddd.web.http.models.users.getList.UserGetListResponseModel;
+import com.example.itddd.web.http.models.users.getlist.UserGetListResponseModel;
 import com.example.itddd.web.http.models.users.post.UserPostRequestModel;
 import com.example.itddd.web.http.models.users.post.UserPostResponseModel;
 import com.example.itddd.web.http.models.users.put.UserPutRequestModel;
@@ -38,7 +38,7 @@ public class UserController {
         var inputData = new UserGetInputData(id);
         var outputData = userApplicationService.get(inputData);
 
-        var maybeUser = outputData.maybeUser().map((it) ->
+        var maybeUser = outputData.maybeUser().map(it ->
                 new UserResponseModel(it.id(), it.name(), it.userType())
         );
 

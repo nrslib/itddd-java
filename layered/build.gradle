@@ -38,7 +38,9 @@ project(":infrastructure-jpa") {
     apply plugin: 'io.spring.dependency-management'
 
     dependencies {
+        implementation project(':common')
         implementation project(':sns-domain')
+        implementation project(':sns-application')
 
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     }

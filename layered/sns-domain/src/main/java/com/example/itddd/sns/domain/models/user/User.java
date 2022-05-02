@@ -35,4 +35,13 @@ public class User {
     public void downgrade() {
         type = UserType.Normal;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name=" + name +
+                ", type=" + type +
+                '}';
+    }
 }

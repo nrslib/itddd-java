@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class JpaUserRepository implements UserRepository {
-    private final UserJpaRepositoryImpl repository;
+    private final UserDataJpaRepository repository;
 
-    public JpaUserRepository(UserJpaRepositoryImpl jpaRepository) {
+    public JpaUserRepository(UserDataJpaRepository jpaRepository) {
         this.repository = jpaRepository;
     }
 
@@ -17,6 +17,16 @@ public class JpaUserRepository implements UserRepository {
         var maybeData = repository.findById(id.value());
 
         return maybeData.map(this::newUser);
+    }
+
+    @Override
+    public Optional<User> find(UserName name) {
+        return Optional.empty();
+    }
+
+    @Override
+    public List<User> find(List<UserId> idList) {
+        return null;
     }
 
     @Override

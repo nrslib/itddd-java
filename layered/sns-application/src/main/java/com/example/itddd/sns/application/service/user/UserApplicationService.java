@@ -8,20 +8,23 @@ import com.example.itddd.sns.application.service.user.getlist.UserGetListOutputD
 import com.example.itddd.sns.application.service.user.register.UserRegisterInputData;
 import com.example.itddd.sns.application.service.user.update.UserUpdateInputData;
 import com.example.itddd.sns.domain.models.user.*;
+import com.example.itddd.sns.domain.services.UserService;
 import org.springframework.transaction.annotation.Transactional;
 
 public class UserApplicationService {
     private final UserFactory userFactory;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserApplicationService(UserFactory userFactory, UserRepository userRepository) {
+    public UserApplicationService(UserFactory userFactory, UserRepository userRepository, UserService userService) {
         this.userFactory = userFactory;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public UserGetListOutputData getList() {
         var users = userRepository.findAll();
-        var userIdList = users.stream().map((it) -> it.getId().value()).toList();
+        var userIdList = users.stream().map(it -> it.getId().value()).toList();
 
         return new UserGetListOutputData(userIdList);
     }
@@ -30,7 +33,8 @@ public class UserApplicationService {
         var userId = new UserId(inputData.id());
         var maybeUser = userRepository.find(userId);
 
-        var maybeUserData = maybeUser.map((it) -> new UserData(it.getId().value(), it.getName().value(), it.getType()));
+        var maybeUserData = maybeUser
+                .map(UserData::new);
 
         return new UserGetOutputData(maybeUserData);
     }
@@ -39,9 +43,14 @@ public class UserApplicationService {
     public UserData register(UserRegisterInputData inputData) {
         var userName = new UserName(inputData.name());
         var user = userFactory.create(userName);
+
+        if (userService.exists(user)) {
+            throw new CannotRegisterUserException("ユーザは既に存在しています。(" + user + ")");
+        }
+
         userRepository.save(user);
 
-        return new UserData(user.getId().value(), user.getName().value(), user.getType());
+        return new UserData(user);
     }
 
     @Transactional
@@ -53,6 +62,10 @@ public class UserApplicationService {
         if (inputData.name() != null) {
             var newUserName = new UserName(inputData.name());
             user.changeName(newUserName);
+        }
+
+        if (userService.exists(user)) {
+            throw new CannotRegisterUserException("ユーザは既に存在しています。(" + user + ")");
         }
 
         userRepository.save(user);

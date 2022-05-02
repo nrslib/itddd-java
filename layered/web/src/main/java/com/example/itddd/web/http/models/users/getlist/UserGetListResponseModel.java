@@ -1,4 +1,4 @@
-package com.example.itddd.web.http.models.users.getList;
+package com.example.itddd.web.http.models.users.getlist;
 
 import java.util.List;
 
